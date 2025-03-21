@@ -1,0 +1,408 @@
+Directory structure:
+└── app/
+    ├── globals.css
+    ├── layout.tsx
+    ├── middleware.ts
+    ├── page.tsx
+    ├── about/
+    │   └── page.tsx
+    ├── api/
+    │   └── auth/
+    │       ├── login/
+    │       │   └── route.ts
+    │       ├── logout/
+    │       │   └── route.ts
+    │       └── signup/
+    │           └── route.ts
+    ├── dashboard/
+    │   └── page.tsx
+    ├── exhibitions/
+    │   └── page.tsx
+    ├── lib/
+    │   └── db.ts
+    ├── login/
+    │   └── page.tsx
+    ├── logout/
+    │   └── page.tsx
+    ├── museums/
+    │   └── page.tsx
+    ├── profile/
+    │   └── page.tsx
+    ├── signup/
+    │   └── page.tsx
+    └── tickets/
+        └── page.tsx
+
+================================================
+File: globals.css
+================================================
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 25 95% 53%;
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 25 95% 53%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 25 95% 53%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @reference border-border;
+  }
+  body {
+    @reference bg-background text-foreground;
+  }
+}
+
+
+
+
+================================================
+File: layout.tsx
+================================================
+import type React from "react"
+import { Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+import { FloatingActionButton } from "@/components/floating-action-button"
+import "./globals.css"
+
+const inter = Inter({ subsets: ["latin"] })
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          {children}
+          <FloatingActionButton />
+        </ThemeProvider>
+      </body>
+    </html>
+  )
+}
+
+
+
+
+================================================
+File: middleware.ts
+================================================
+// app/middleware.ts
+import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+
+export function middleware(req: NextRequest) {
+    const token = req.cookies.get('token')?.value;
+
+    if (!token) {
+        return NextResponse.redirect(new URL('/login', req.url));
+    }
+
+    try {
+        jwt.verify(token, process.env.JWT_SECRET!);
+        return NextResponse.next();
+    } catch (error) {
+        return NextResponse.redirect(new URL('/login', req.url));
+    }
+}
+
+export const config = {
+    matcher: ['/dashboard/:path*', '/tickets/:path*', '/profile/:path*'],
+};
+
+
+================================================
+File: page.tsx
+================================================
+import { LandingPage } from "@/components/landing-page"
+
+export default function Home() {
+  return <LandingPage />
+}
+
+
+
+
+================================================
+File: about/page.tsx
+================================================
+import { AboutPage } from "@/components/about-page"
+
+export default function About() {
+  return <AboutPage />
+}
+
+
+
+
+================================================
+File: api/auth/login/route.ts
+================================================
+// app/api/auth/login/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { query } from '@/app/lib/db';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+export async function POST(req: NextRequest) {
+    try {
+        const { email, password } = await req.json();
+
+        if (!email || !password) {
+            return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+        }
+
+        // Find user
+        const users = (await query('SELECT * FROM users WHERE email = ?', [email])) as any[];
+        if (users.length === 0) {
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        }
+
+        const user = users[0];
+
+        // Verify password
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) {
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+        }
+
+        // Generate JWT
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+
+        // Set token in cookie (optional, or return it in response)
+        const response = NextResponse.json({ message: 'Login successful' });
+        response.cookies.set('token', token, { httpOnly: true, maxAge: 3600 });
+        return response;
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+
+================================================
+File: api/auth/logout/route.ts
+================================================
+// app/api/auth/logout/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+    const response = NextResponse.json({ message: 'Logout successful' });
+    response.cookies.delete('token');
+    return response;
+}
+
+
+================================================
+File: api/auth/signup/route.ts
+================================================
+// app/api/auth/signup/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { query } from '@/app/lib/db';
+import bcrypt from 'bcryptjs';
+
+export async function POST(req: NextRequest) {
+    try {
+        const { email, password, firstName, lastName } = await req.json();
+
+        if (!email || !password) {
+            return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+        }
+
+        // Check if user exists
+        const existingUser = await query('SELECT * FROM users WHERE email = ?', [email]);
+        if ((existingUser as any[]).length > 0) {
+            return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert user
+        await query(
+            'INSERT INTO users (email, password, first_name, last_name) VALUES (?, ?, ?, ?)',
+            [email, hashedPassword, firstName, lastName]
+        );
+
+        return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+}
+
+
+================================================
+File: dashboard/page.tsx
+================================================
+import { AnalyticsDashboard } from "@/components/analytics-dashboard"
+
+export default function DashboardPage() {
+  return <AnalyticsDashboard />
+}
+
+
+
+
+================================================
+File: exhibitions/page.tsx
+================================================
+import { ExhibitionListing } from "@/components/exhibition-listing"
+
+export default function ExhibitionsPage() {
+  return <ExhibitionListing />
+}
+
+
+
+
+================================================
+File: lib/db.ts
+================================================
+// app/lib/db.ts
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+});
+
+export async function query(sql: string, values?: any[]) {
+    const [rows] = await pool.execute(sql, values);
+    return rows;
+}
+
+
+================================================
+File: login/page.tsx
+================================================
+import { LoginForm } from "@/components/login-form"
+
+export default function LoginPage() {
+  return <LoginForm />
+}
+
+
+
+
+================================================
+File: logout/page.tsx
+================================================
+import { LogoutConfirmation } from "@/components/logout-confirmation"
+
+export default function LogoutPage() {
+  return <LogoutConfirmation />
+}
+
+
+
+
+================================================
+File: museums/page.tsx
+================================================
+import { MuseumListing } from "@/components/museum-listing"
+
+export default function MuseumsPage() {
+  return <MuseumListing />
+}
+
+
+
+
+================================================
+File: profile/page.tsx
+================================================
+import { ProfilePage } from "@/components/profile-page"
+
+export default function Profile() {
+  return <ProfilePage />
+}
+
+
+
+
+================================================
+File: signup/page.tsx
+================================================
+import { SignupForm } from "@/components/signup-form";
+
+export default function SignupPage() {
+    return <SignupForm />;
+}
+
+
+================================================
+File: tickets/page.tsx
+================================================
+import { TicketManagement } from "@/components/ticket-management"
+
+export default function TicketsPage() {
+  return <TicketManagement />
+}
+
+
+
