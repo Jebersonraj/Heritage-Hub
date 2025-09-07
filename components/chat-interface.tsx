@@ -105,7 +105,7 @@ export function ChatInterface() {
         // Use Gemini to generate a response
         const prompt = `User: ${input}\nYou are a helpful museum ticketing assistant. Respond in ${language}.`;
         const systemPrompt =
-            "You are a helpful museum ticketing assistant for Heritage Hub. Keep responses concise and focused on helping users book museum tickets, learn about exhibitions, or get information about museums. If users want to book tickets, guide them to use the booking system.";
+            "You are a helpful museum ticketing assistant for Heritage Hub. Keep responses concise and focused on helping users book museum tickets, learn about exhibitions, or get information about museums. If users want to book tickets, guide them to book tickets.";
 
         const result = await model.generateContent(`${systemPrompt}\n${prompt}`);
         const text = result.response.text();

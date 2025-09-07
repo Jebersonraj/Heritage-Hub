@@ -91,7 +91,7 @@ const exhibitions = [
   },
   {
     id: "8",
-    title: "The Science of Light",
+    title: "The Science of Lights",
     description: "Interactive exhibits exploring the properties and applications of light in science and art.",
     image: "/8.jpg",
     museum: "Interactive Science Center",
