@@ -25,7 +25,7 @@ export function SignupForm() {
 
             if (!response.ok) {
                 const data = await response.json();
-                throw new Error(data.error || 'Signup failed');
+                throw new Error(data.error || 'Signup failed,Try again later');
             }
 
             // Redirect to login page after successful signup
